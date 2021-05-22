@@ -9,7 +9,7 @@ window.onload = async () => {
 
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "https://code4sabae.github.io/leaflet-mjs/leaflet.css";
+    link.href = "https://code4sabae.github.io/leaflet-mjs/leaflet-grayscale.css";
     comp.appendChild(link);
     link.onload = () => init();
 }
@@ -41,7 +41,6 @@ const init = async () => {
     attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>"',
     maxZoom: 18,
     }).addTo(map);
-
 
     const iconlayer = L.layerGroup();
     iconlayer.addTo(map);
