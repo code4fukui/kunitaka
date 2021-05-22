@@ -1,7 +1,108 @@
-file
-八幡2丁目.csv
-庄町.csv
-村国3丁目.csv
-村国4丁目.csv
-横市町.csv
-瓜生町.csv
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<script type="module">
+import L from "https://code4sabae.github.io/leaflet-mjs/leaflet.mjs";
+import { Geo3x3 } from "https://geo3x3.com/Geo3x3.js";
+import { CSV } from "https://js.sabae.cc/CSV.js";
+
+window.onload = async () => {
+    const comp = document.body;
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://code4sabae.github.io/leaflet-mjs/leaflet.css";
+    comp.appendChild(link);
+    link.onload = () => init();
+}
+const init = async () => {
+    const comp = document.body;
+
+    document.body.style.margin = "0";
+    document.body.style.textAlign = "center";
+
+    const h1 = document.createElement("h1");
+    h1.textContent = "越前市 国高地区 通学安全マップ";
+    h1.style.margin = ".3em";
+    comp.appendChild(h1);
+
+    const div = document.createElement("div");
+    comp.appendChild(div);
+    div.style.width = "100%";
+    div.style.height = "85vh";
+
+    const footer = document.createElement("a");
+    footer.textContent = "Code for Fukui";
+    footer.href = "https://github.com/code4fukui/kunitaka/";
+    comp.appendChild(footer);
+
+    //
+    const map = L.map(div);
+    // set 国土地理院地図 https://maps.gsi.go.jp/development/ichiran.html
+    L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
+    attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>"',
+    maxZoom: 18,
+    }).addTo(map);
+
+
+    const iconlayer = L.layerGroup();
+    iconlayer.addTo(map);
+    
+    const url = "./kidssafe.csv";
+    const data = CSV.toJSON(await CSV.fetch(url));
+    console.log(data);
+    const list = [];
+    for (const d of data) {
+        const d2 = CSV.toJSON(await CSV.fetch("kidssafe/" + d.name + ".csv"));
+        d2.forEach(n => {
+            n["町名"] = d.name;
+            list.push(n);
+        })
+    }
+    console.log(list);
+
+    const lls = [];
+    for (const d of list) {
+        const pos = Geo3x3.decode(d.Geo3x3);
+        console.log(d.geo3x3, pos.lat)
+        const ll = [pos.lat, pos.lng];
+        const icon = "kidssafe_icon.png";
+        const iconw = 50;
+        const iconh = 59;
+        const opt = {};
+        opt.icon = L.icon({
+            iconUrl: icon,
+            iconRetilaUrl: icon,
+            iconSize: [iconw, iconh],
+            iconAnchor: [iconw / 2, iconh / 2],
+            popupAnchor: [0, -iconh / 2],
+        });
+        const marker = L.marker(ll, opt);
+        const tbl = makeTable(d);
+        marker.bindPopup(tbl.outerHTML); // `<img width="300px" src=${path}>`);
+        iconlayer.addLayer(marker);
+        lls.push(ll);
+            
+        if (lls.length) {
+            map.fitBounds(lls);
+        }
+    }
+};
+const makeTable = (d) => {
+    const cr = (tag) => document.createElement(tag);
+    const tbl = cr("table");
+    for (const name in d) {
+        const val = d[name];
+        const tr = cr("tr");
+        tbl.appendChild(tr);
+        const th = cr("th");
+        th.textContent = name;
+        tr.appendChild(th);
+        const td = cr("td");
+        td.textContent = val;
+        tr.appendChild(td);
+    }
+    return tbl;
+};
+
+</script>
+</head>
+</html>
