@@ -62,7 +62,6 @@ const init = async () => {
     const lls = [];
     for (const d of list) {
         const pos = Geo3x3.decode(d.Geo3x3);
-        console.log(d.geo3x3, pos.lat)
         const ll = [pos.lat, pos.lng];
         const icon = "kidssafe_icon.png";
         const iconw = 50;
