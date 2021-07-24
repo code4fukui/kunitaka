@@ -4,6 +4,7 @@
 import L from "https://code4sabae.github.io/leaflet-mjs/leaflet.mjs";
 import { Geo3x3 } from "https://geo3x3.com/Geo3x3.js";
 import { CSV } from "https://js.sabae.cc/CSV.js";
+import { QRCode } from "https://code4sabae.github.io/leaflet-mjs/qr-code.mjs";
 
 window.onload = async () => {
     const comp = document.body;
@@ -98,6 +99,8 @@ const init = async () => {
     if (lls.length) {
         map.fitBounds(lls);
     }
+    
+    document.body.appendChild(new QRCode());
 };
 const makeTable = (d) => {
     const cr = (tag) => document.createElement(tag);
@@ -118,8 +121,4 @@ const makeTable = (d) => {
 
 </script>
 </head>
-<body>
-<script type='module' src="https://code4sabae.github.io/leaflet-mjs/qr-code.mjs"></script>
-<qr-code></qr-code>
-</body>
 </html>
