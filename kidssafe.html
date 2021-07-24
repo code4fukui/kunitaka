@@ -4,7 +4,17 @@
 import L from "https://code4sabae.github.io/leaflet-mjs/leaflet.mjs";
 import { Geo3x3 } from "https://geo3x3.com/Geo3x3.js";
 import { CSV } from "https://js.sabae.cc/CSV.js";
-import { QRCode } from "https://code4sabae.github.io/leaflet-mjs/qr-code.mjs";
+//import { QRCode } from "https://code4sabae.github.io/leaflet-mjs/qr-code.mjs";
+
+class QRCode extends HTMLElement {
+  constructor () {
+    super();
+    const img = new Image();
+    img.src = "https://chart.apis.google.com/chart?chs=140x140&cht=qr&chl=" + encodeURIComponent(document.location);
+    this.append(img);
+  }
+}
+customElements.define('qr-code', QRCode);
 
 window.onload = async () => {
     const comp = document.body;
