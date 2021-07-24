@@ -1,10 +1,34 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
-<title>越前市 国高地区 地域安全マップ</title>
-<script type="module">
+<meta charset="utf-8"><script type="module">
+import { style } from "https://js.sabae.cc/stdom.js";
 import L from "https://code4sabae.github.io/leaflet-mjs/leaflet.mjs";
 import { Geo3x3 } from "https://geo3x3.com/Geo3x3.js";
 import { CSV } from "https://js.sabae.cc/CSV.js";
 import { QRCode } from "https://code4fukui.github.io/qr-code/qr-code.js";
+import { fetchImage } from "https://js.sabae.cc/fetchImage.js";
+
+const getResized = (w, h, min) => {
+    if (w > h) {
+        return { width: min, height: min * h / w };
+    } else {
+        return { width: min * w / h, height: min };
+    }
+};
+const makeTable = (d) => {
+    const cr = (tag) => document.createElement(tag);
+    const tbl = cr("table");
+    for (const name in d) {
+        const val = d[name];
+        const tr = cr("tr");
+        tbl.appendChild(tr);
+        const th = cr("th");
+        th.textContent = name;
+        tr.appendChild(th);
+        const td = cr("td");
+        td.textContent = val;
+        tr.appendChild(td);
+    }
+    return tbl;
+};
 
 window.onload = async () => {
     const comp = document.body;
@@ -24,15 +48,27 @@ const init = async () => {
     comp.style.color = "white";
 
     const h1 = document.createElement("h1");
-    h1.textContent = "越前市 国高地区 地域安全マップ";
+    h1.textContent = document.title = "越前市 国高地区 地域安全マップ";
     h1.style.margin = "0";
     h1.style.padding = ".3em";
     comp.appendChild(h1);
 
     const div = document.createElement("div");
     comp.appendChild(div);
-    div.style.width = "100%";
-    div.style.height = "calc(100vh - 8em)";
+    div.className = "divmap";
+    style({
+        ".divmap": {
+            width: "100%",
+            height: "calc(100vh - 8em)",
+        },
+        "@media print": { // 印刷用CSS
+            ".divmap": {
+                width: "100%",
+                height: "calc(100vh - 2em - 300px)",
+                "background-color": "red",
+            },
+        },
+    });
 
     const footer = document.createElement("a");
     footer.textContent = "データ編集は閲覧、編集はGitHubで";
@@ -65,14 +101,13 @@ const init = async () => {
     console.log(list);
 
     const lls = [];
-    const showIcons = (list, icon) => {
-        for (const d of list) {
-            const pos = Geo3x3.decode(d.Geo3x3);
-            console.log(d);
-            const ll = [pos.lat, pos.lng];
-            const iconw = 50;
-            const iconh = 59;
-            const opt = {};
+    const showIcons = async (list, icon) => {
+        const opt = {};
+        try {
+            const img = await fetchImage(icon);
+            const size = getResized(img.width, img.height, 50);
+            const iconw = size.width;
+            const iconh = size.height;
             opt.icon = L.icon({
                 iconUrl: icon,
                 iconRetilaUrl: icon,
@@ -80,21 +115,38 @@ const init = async () => {
                 iconAnchor: [iconw / 2, iconh / 2],
                 popupAnchor: [0, -iconh / 2],
             });
+        } catch (e) {
+            console.log("can't load: " + icon);
+        }
+        for (const d of list) {
+            const pos = Geo3x3.decode(d.Geo3x3);
+            //console.log(d);
+            const ll = [pos.lat, pos.lng];
             const marker = L.marker(ll, opt);
             const tbl = makeTable(d);
+            tbl.className = "mapinfo";
             marker.bindPopup(tbl.outerHTML); // `<img width="300px" src=${path}>`);
             iconlayer.addLayer(marker);
             lls.push(ll);
         }
     };
+    style({
+        ".mapinfo": {
+            color: "black",
+        },
+        ".mapinfo td": {
+            "text-align": "left",
+            "white-space": "pre-wrap",
+        },
+    });
 
     showIcons(list, "kidssafe_icon.png");
 
     const list2 = CSV.toJSON(await CSV.fetch("./house110.csv"));
-    showIcons(list2, "house110_icon.png");
+    await showIcons(list2, "house110_icon.png");
 
     const list3 = CSV.toJSON(await CSV.fetch("./kidssafe2021.csv"));
-    showIcons(list3, "kidssafe2021_icon.png");
+    await showIcons(list3, "kidssafe2021_icon.png");
 
     if (lls.length) {
         map.fitBounds(lls);
@@ -103,23 +155,4 @@ const init = async () => {
     document.body.appendChild(document.createElement("br"));
     document.body.appendChild(new QRCode());
 };
-const makeTable = (d) => {
-    const cr = (tag) => document.createElement(tag);
-    const tbl = cr("table");
-    for (const name in d) {
-        const val = d[name];
-        const tr = cr("tr");
-        tbl.appendChild(tr);
-        const th = cr("th");
-        th.textContent = name;
-        tr.appendChild(th);
-        const td = cr("td");
-        td.textContent = val;
-        tr.appendChild(td);
-    }
-    return tbl;
-};
-
 </script>
-</head>
-</html>
