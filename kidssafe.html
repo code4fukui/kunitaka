@@ -90,9 +90,10 @@ const init = async () => {
     showIcons(list, "kidssafe_icon.png");
 
     const list2 = CSV.toJSON(await CSV.fetch("./house110.csv"));
-    //showIcons(list2, "house110_icon.png");
-    console.log(list2);
     showIcons(list2, "house110_icon.png");
+
+    const list3 = CSV.toJSON(await CSV.fetch("./kidssafe2021.csv"));
+    showIcons(list3, "kidssafe2021_icon.png");
 
     if (lls.length) {
         map.fitBounds(lls);
