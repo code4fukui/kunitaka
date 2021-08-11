@@ -151,7 +151,20 @@ const init = async () => {
     if (lls.length) {
         map.fitBounds(lls);
     }
-    
+
+    // geojson
+    const geojsonurl = "./schoolzone.geojson";
+    console.log(geojsonurl);
+    const geojson = await (await fetch(geojsonurl)).json();
+    console.log(geojson);
+    L.geoJson(geojson, { style: () => {
+        return {
+            color: "#ff0000",
+            opacity: 1,
+            weight: 5,
+        };
+    }}).addTo(map);
+
     document.body.appendChild(document.createElement("br"));
     document.body.appendChild(new QRCode());
 };
