@@ -24,7 +24,16 @@ const makeTable = (d) => {
         th.textContent = name;
         tr.appendChild(th);
         const td = cr("td");
-        td.textContent = val;
+        td.style.minWidth = "8em";
+        td.style.wordBreak = "break-all";
+        const n = val.match(/<a href=(.+)>(.+)<\/a>/);
+        if (n) {
+            const url = n[1];
+            const cap = n[2];
+            td.innerHTML = `<a href=${url}>${cap}</a>`;
+        } else {
+            td.textContent = val;
+        }
         tr.appendChild(td);
     }
     return tbl;
@@ -87,19 +96,6 @@ const init = async () => {
     const iconlayer = L.layerGroup();
     iconlayer.addTo(map);
     
-    const url = "./kidssafe.csv";
-    const data = CSV.toJSON(await CSV.fetch(url));
-    console.log(data);
-    const list = [];
-    for (const d of data) {
-        const d2 = CSV.toJSON(await CSV.fetch("kidssafe/" + d.name + ".csv"));
-        d2.forEach(n => {
-            n["町名"] = d.name;
-            list.push(n);
-        })
-    }
-    console.log(list);
-
     const lls = [];
     const showIcons = async (list, icon) => {
         const opt = {};
@@ -119,8 +115,7 @@ const init = async () => {
             console.log("can't load: " + icon);
         }
         for (const d of list) {
-            const pos = Geo3x3.decode(d.Geo3x3);
-            //console.log(d);
+            const pos = Geo3x3.decode(d.Geo3x3 || d.geo3x3);
             const ll = [pos.lat, pos.lng];
             const marker = L.marker(ll, opt);
             const tbl = makeTable(d);
@@ -140,13 +135,32 @@ const init = async () => {
         },
     });
 
+    // 危険箇所
+    const url = "./kidssafe.csv";
+    const data = CSV.toJSON(await CSV.fetch(url));
+    console.log(data);
+    const list = [];
+    for (const d of data) {
+        const d2 = CSV.toJSON(await CSV.fetch("kidssafe/" + d.name + ".csv"));
+        d2.forEach(n => {
+            n["町名"] = d.name;
+            list.push(n);
+        })
+    }
+    console.log(list);
     showIcons(list, "kidssafe_icon.png");
 
-    const list2 = CSV.toJSON(await CSV.fetch("./house110.csv"));
-    await showIcons(list2, "house110_icon.png");
-
+    // 危険箇所2021
     const list3 = CSV.toJSON(await CSV.fetch("./kidssafe2021.csv"));
     await showIcons(list3, "kidssafe2021_icon.png");
+
+    // ドローン写真
+    const list4 = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/vr-fukui/vr-kunitaka.csv"));
+    await showIcons(list4, "./drone_icon.png");
+
+    // こども110番の家
+    const list2 = CSV.toJSON(await CSV.fetch("./house110.csv"));
+    await showIcons(list2, "house110_icon.png");
 
     if (lls.length) {
         map.fitBounds(lls);
