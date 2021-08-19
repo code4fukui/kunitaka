@@ -125,6 +125,24 @@ const init = async () => {
             lls.push(ll);
         }
     };
+    const showPoints = async (list, color) => {
+        for (const d of list) {
+            //const pos = Geo3x3.decode(d.Geo3x3 || d.geo3x3);
+            //const ll = [pos.lat, pos.lng];
+            const ll = [d.lat, d.lng];
+            const marker = L.circle(ll, {
+                radius: 2,
+                color,
+                fillColor: color,
+                fillOpacity: 1
+            });
+            const tbl = makeTable(d);
+            tbl.className = "mapinfo";
+            marker.bindPopup(tbl.outerHTML); // `<img width="300px" src=${path}>`);
+            iconlayer.addLayer(marker);
+            lls.push(ll);
+        }
+    };
     style({
         ".mapinfo": {
             color: "black",
@@ -162,6 +180,10 @@ const init = async () => {
     const list2 = CSV.toJSON(await CSV.fetch("./house110.csv"));
     await showIcons(list2, "house110_icon.png");
 
+    // 街灯
+    const listLight = CSV.toJSON(await CSV.fetch("./streetlight/k2.csv"));
+    await showPoints(listLight, "#fa0");
+    
     if (lls.length) {
         map.fitBounds(lls);
     }
