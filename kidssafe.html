@@ -5,6 +5,29 @@ import { Geo3x3 } from "https://geo3x3.com/Geo3x3.js";
 import { CSV } from "https://js.sabae.cc/CSV.js";
 import { QRCode } from "https://code4fukui.github.io/qr-code/qr-code.js";
 import { fetchImage } from "https://js.sabae.cc/fetchImage.js";
+//import { InputCheckbox } from "https://code4fukui.github.io/input-checkbox/input-checkbox.js";
+import { create } from "https://js.sabae.cc/stdcomp.js";
+
+class CheckBox extends HTMLElement {
+    constructor(s) {
+        super();
+        const label = create("label", this);
+        this.inp = create("input", label);
+        this.inp.type = "checkbox";
+        create("span", label).textContent = s;
+    }
+    set checked(b) {
+        this.inp.checked = b;
+    }
+    get checked() {
+        return this.inp.checked;
+    }
+}
+
+customElements.define("check-box", CheckBox);
+
+export { CheckBox };
+
 
 const getResized = (w, h, min) => {
     if (w > h) {
@@ -68,7 +91,7 @@ const init = async () => {
     style({
         ".divmap": {
             width: "100%",
-            height: "calc(100vh - 8em)",
+            height: "calc(100vh - 10em)",
         },
         "@media print": { // 印刷用CSS
             ".divmap": {
@@ -79,12 +102,6 @@ const init = async () => {
         },
     });
 
-    const footer = document.createElement("a");
-    footer.textContent = "データ編集は閲覧、編集はGitHubで";
-    footer.href = "https://github.com/code4fukui/kunitaka/tree/main/kidssafe"; // "https://github.com/code4fukui/kunitaka/";
-    footer.style.color = "white";
-    comp.appendChild(footer);
-
     //
     const map = L.map(div);
     // set 国土地理院地図 https://maps.gsi.go.jp/development/ichiran.html
@@ -93,11 +110,11 @@ const init = async () => {
         maxZoom: 18,
     }).addTo(map);
 
-    const iconlayer = L.layerGroup();
-    iconlayer.addTo(map);
     
     const lls = [];
     const showIcons = async (list, icon) => {
+        const iconlayer = L.layerGroup();
+        iconlayer.addTo(map);
         const opt = {};
         try {
             const img = await fetchImage(icon);
@@ -124,8 +141,11 @@ const init = async () => {
             iconlayer.addLayer(marker);
             lls.push(ll);
         }
+        return iconlayer;
     };
     const showPoints = async (list, color) => {
+        const iconlayer = L.layerGroup();
+        iconlayer.addTo(map);
         for (const d of list) {
             //const pos = Geo3x3.decode(d.Geo3x3 || d.geo3x3);
             //const ll = [pos.lat, pos.lng];
@@ -142,6 +162,7 @@ const init = async () => {
             iconlayer.addLayer(marker);
             lls.push(ll);
         }
+        return iconlayer;
     };
     style({
         ".mapinfo": {
@@ -152,6 +173,9 @@ const init = async () => {
             "white-space": "pre-wrap",
         },
     });
+
+    //
+    const layers = [];
 
     // 危険箇所
     const url = "./kidssafe.csv";
@@ -166,46 +190,80 @@ const init = async () => {
         })
     }
     console.log(list);
-    showIcons(list, "kidssafe_icon.png");
+    layers.push(["危険箇所2020", await showIcons(list, "kidssafe_icon.png")]);
 
     // 危険箇所2021
     const list3 = CSV.toJSON(await CSV.fetch("./kidssafe2021.csv"));
-    await showIcons(list3, "kidssafe2021_icon.png");
+    layers.push(["危険箇所2021", await showIcons(list3, "kidssafe2021_icon.png")]);
 
-    //不審者情報
+    // 不審者情報
     const listfusinsya = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/kunitaka/fusinnsya.csv"));
-    await showIcons(listfusinsya, "https://code4fukui.github.io/kunitaka/fusinsya.png");
+    layers.push(["不審者情報", await showIcons(listfusinsya, "https://code4fukui.github.io/kunitaka/fusinsya.png")]);
 
     // ドローン写真
     const list4 = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/vr-fukui/vr-kunitaka.csv"));
-    await showIcons(list4, "./drone_icon.png");
+    layers.push(["ドローン写真", await showIcons(list4, "./drone_icon.png")]);
 
     // こども110番の家
     const list2 = CSV.toJSON(await CSV.fetch("./house110.csv"));
-    await showIcons(list2, "house110_icon.png");
+    layers.push(["こども110番の家", await showIcons(list2, "house110_icon.png")]);
 
     // 街灯
     const listLight = CSV.toJSON(await CSV.fetch("./streetlight/k2.csv"));
-    await showPoints(listLight, "#fa0");
+    layers.push(["街灯", await showPoints(listLight, "#fa0")]);
     
     if (lls.length) {
         map.fitBounds(lls);
     }
 
-    // geojson
+    // 通学路 geojson
     const geojsonurl = "./schoolzone.geojson";
     console.log(geojsonurl);
     const geojson = await (await fetch(geojsonurl)).json();
     console.log(geojson);
-    L.geoJson(geojson, { style: () => {
+    const schoolzone = L.geoJson(geojson, { style: () => {
         return {
             color: "#ff0000",
             opacity: 1,
             weight: 5,
         };
-    }}).addTo(map);
+    }});
+    schoolzone.addTo(map);
+    layers.push(["通学路", schoolzone]);
+
+    // レイヤー選択
+    {
+        const div = document.createElement("div");
+        document.body.appendChild(div);
+        div.className = "selectlayers";
+        for (const layer of layers) {
+            const chk = new CheckBox(layer[0]);
+            div.appendChild(chk);
+            chk.checked = true;
+            chk.onchange = () => {
+                if (chk.checked) {
+                    map.addLayer(layer[1]);
+                } else {
+                    map.removeLayer(layer[1]);
+                }
+            };
+        }
+    }
+
+    // footer
+    const footer = document.createElement("a");
+    footer.textContent = "データ編集は閲覧、編集はGitHubで";
+    footer.href = "https://github.com/code4fukui/kunitaka/tree/main/kidssafe"; // "https://github.com/code4fukui/kunitaka/";
+    footer.style.color = "white";
+    comp.appendChild(footer);
 
     document.body.appendChild(document.createElement("br"));
     document.body.appendChild(new QRCode());
 };
 </script>
+
+<style>
+.selectlayers {
+    margin: 1em;
+}
+</style>
