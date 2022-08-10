@@ -8,3 +8,11 @@ https://code4fukui.github.io/kunitaka/kidssafe.html
 
 - [通学路GeoJSON](https://code4fukui.github.io/kunitaka/schoolzone.geojson)
 
+## 交通事故オープンデータのデータ加工 by Jupyter Notebook
+
+```
+python3 -m pip install pandas
+python3 -m pip install jupyter
+jupyter notebook
+```
+open "data_analyse.ipynb"
