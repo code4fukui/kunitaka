@@ -235,6 +235,19 @@ const init = async () => {
     schoolzone.addTo(map);
     layers.push(["通学路", schoolzone]);
 
+    // 事故地点
+    const accidneturl = "accidents_kuknitaka_geo3x3.csv"
+    const accidents = CSV.toJSON(await CSV.fetch(accidneturl));
+    layers.push(["事故地点", await showIcons(accidents, "tobidashi_kodomo.png")]);
+
+
+    // for (const point of accidents){
+    //     const marker = L.icon([parseFloat(point.緯度), parseFloat(point.経度)],
+    //     { icon: L.spriteIcon(point.color) });
+    // }
+    //     marker.addTo(map);
+
+ 
     // レイヤー選択
     {
         const div = document.createElement("div");
