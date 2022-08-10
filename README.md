@@ -6,5 +6,5 @@ https://code4fukui.github.io/kunitaka/kidssafe.html
 
 ## オープンデータ CC BY
 
-- [通学路GeoJSON](https://code4fukui.github.io/schoolzone.geojson)
+- [通学路GeoJSON](https://code4fukui.github.io/kunitaka/schoolzone.geojson)
 
