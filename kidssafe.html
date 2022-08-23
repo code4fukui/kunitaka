@@ -234,6 +234,21 @@ const init = async () => {
     }});
     schoolzone.addTo(map);
     layers.push(["通学路", schoolzone]);
+    
+    // 通学路危険地区 geojson
+    const geojsonurl2 = "./schoolzone2.geojson";
+    console.log(geojsonurl2);
+    const geojson2 = await (await fetch(geojsonurl2)).json();
+    console.log(geojson2);
+    const schoolzone = L.geoJson(geojson2, { style: () => {
+        return {
+            color: "#00ff00",
+            opacity: 1,
+            weight: 5,
+        };
+    }});
+    schoolzone.addTo(map);
+    layers.push(["通学路", schoolzone]);
 
     // 事故地点
     const accidneturl = "accidents_kuknitaka_geo3x3.csv"
