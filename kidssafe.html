@@ -240,7 +240,7 @@ const init = async () => {
     console.log(geojsonurl2);
     const geojson2 = await (await fetch(geojsonurl2)).json();
     console.log(geojson2);
-    const schoolzone = L.geoJson(geojson2, { style: () => {
+    const schoolzone2 = L.geoJson(geojson2, { style: () => {
         return {
             color: "#00ff00",
             opacity: 1,
