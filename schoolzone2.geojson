@@ -1,0 +1,134 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "_color": "#00ff00",
+        "_opacity": 0.5,
+        "_weight": 3
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            136.179571,
+            35.921595
+          ],
+          [
+            136.182318,
+            35.92156
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_color": "#00ff00",
+        "_opacity": 0.5,
+        "_weight": 3
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            136.189077,
+            35.917717
+          ],
+          [
+            136.189077,
+            35.919324
+          ],
+          [
+            136.188852,
+            35.919628
+          ],
+          [
+            136.188762,
+            35.919953
+          ],
+          [
+            136.188827,
+            35.921586
+          ],
+          [
+            136.190007,
+            35.921691
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_color": "#00ff00",
+        "_opacity": 0.5,
+        "_weight": 3
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            136.18907,
+            35.916657
+          ],
+          [
+            136.188941,
+            35.914502
+          ],
+          [
+            136.189027,
+            35.913077
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_color": "#00ff00",
+        "_opacity": 0.5,
+        "_weight": 3
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            136.18392,
+            35.916726
+          ],
+          [
+            136.184092,
+            35.915597
+          ],
+          [
+            136.18407,
+            35.913146
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_color": "#00ff00",
+        "_opacity": 0.5,
+        "_weight": 3
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            136.192253,
+            35.908031
+          ],
+          [
+            136.198497,
+            35.908188
+          ]
+        ]
+      }
+    }
+  ]
+}

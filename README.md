@@ -31,4 +31,3 @@ python3 -m pip install jupyter
 jupyter notebook
 ```
 open "data_analyse.ipynb"
-
