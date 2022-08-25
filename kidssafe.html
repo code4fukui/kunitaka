@@ -223,6 +223,7 @@
     }
 
     //通学路 geojson
+    const roadLayer = L.layerGroup();
     const geojsonurl1 = "./schoolzone1.geojson";
     console.log(geojsonurl1);
     const geojson1 = await (await fetch(geojsonurl1)).json();
@@ -249,11 +250,11 @@
         };
       },
     });
-    schoolzone1.addTo(map);
-    schoolzone2.addTo(map);
-    layers.push(["通学路",schoolzone1],["グリーンベルト",schoolzone2]);
-    console.log(schoolzone2)
-
+    roadLayer.addLayer(schoolzone1);
+    roadLayer.addLayer(schoolzone2);
+    roadLayer.addTo(map);
+    layers.push(["通学路", roadLayer]);
+    
     //グリーンベルト
     // layers.push(["グリーンベルト", schoolzone2]);
 
