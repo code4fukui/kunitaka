@@ -135,8 +135,14 @@
         console.log("can't load: " + icon);
       }
       for (const d of list) {
-        const pos = Geo3x3.decode(d.Geo3x3 || d.geo3x3);
-        const ll = [pos.lat, pos.lng];
+        const getPos = () => {
+          const pos = Geo3x3.decode(d.Geo3x3 || d.geo3x3);
+          if (pos) {
+            return [pos.lat, pos.lng];
+          }
+          return [d.lat, d.lng];
+        };
+        const ll = getPos();
         const marker = L.marker(ll, opt);
         const tbl = makeTable(d);
         tbl.className = "mapinfo";
@@ -266,6 +272,38 @@
       await showIcons(accidents, "tobidashi_kodomo.png"),
     ]);
 
+    //事故地点
+    {
+      const urls = [
+        "aioi_events.csv",
+        "aioi_events_additional.csv",
+      ];
+      const data = [];
+      for (const url of urls) {
+        const data0 = CSV.toJSON(await CSV.fetch(url));
+        const data2 = data0.map(d => ({ name: d.イベント, 発生件数: d.発生件数, lat: d.緯度, lng: d.経度 })).filter(d => d.lat || d.lng);
+        data2.forEach(d => data.push(d));
+      }
+      const names = [
+        "急加速",
+        "急ブレーキ",
+        "前方衝突警告",
+        "急ハンドル",
+        "ふらつき",
+        "車線逸脱警告",
+        "速度超過",
+        "衝突",
+      ];
+      for (let i = 0; i < names.length; i++) {
+        const name = names[i];
+        const data3 = data.filter(d => d.name == name);
+        layers.push([
+          "テレマティクスデータ " + name,
+          await showIcons(data3, "aioi_" + (i + 1) + ".png"),
+        ]);
+      }
+    }
+
     // for (const point of accidents){
     //     const marker = L.icon([parseFloat(point.緯度), parseFloat(point.経度)],
     //     { icon: L.spriteIcon(point.color) });
@@ -291,10 +329,19 @@
     }
 
     // footer
-    const footer = document.createElement("a");
-    footer.textContent = "データ編集や閲覧はGitHubで";
-    footer.href = "https://github.com/code4fukui/kunitaka/tree/main/kidssafe"; // "https://github.com/code4fukui/kunitaka/";
-    footer.style.color = "white";
+    const footer = document.createElement("footer");
+    const links = [
+      { text: "データ編集や閲覧はGitHubで", url: "https://github.com/code4fukui/kunitaka/tree/main/kidssafe" },
+      { text: "テレマティクスデータ: CC BY / ODbL by あいおいニッセイ同和損保", url: "https://www.aioinissaydowa.co.jp/" },
+    ];
+    for (const link of links) {
+      const a = document.createElement("a");
+      a.style.display = "block";
+      a.textContent = link.text;
+      a.href = link.url; // "https://github.com/code4fukui/kunitaka/";
+      a.style.color = "white";
+      footer.appendChild(a);
+    }
     comp.appendChild(footer);
 
     document.body.appendChild(document.createElement("br"));
