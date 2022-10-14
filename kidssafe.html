@@ -189,7 +189,6 @@
     // 危険箇所
     const url = "./kidssafe.csv";
     const data = CSV.toJSON(await CSV.fetch(url));
-    console.log(data);
     const list = [];
     for (const d of data) {
       const d2 = CSV.toJSON(await CSV.fetch("kidssafe/" + d.name + ".csv"));
@@ -272,7 +271,7 @@
       await showIcons(accidents, "tobidashi_kodomo.png"),
     ]);
 
-    //事故地点
+    // テレマティクス
     {
       const urls = [
         "aioi_events.csv",
@@ -302,6 +301,21 @@
           await showIcons(data3, "aioi_" + (i + 1) + ".png"),
         ]);
       }
+    }
+
+    // 防犯カメラ
+    {
+      const info = {
+        url: "./bohan_camera.csv",
+        name: "防犯カメラ",
+        icon: "bohan_camera.png",
+      };
+      const data = CSV.toJSON(await CSV.fetch(info.url));
+      console.log(data);
+      layers.push([
+        info.name,
+        await showIcons(data, info.icon),
+      ]);
     }
 
     // for (const point of accidents){
