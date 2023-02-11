@@ -83,16 +83,16 @@
     document.title = "越前市国高地区 地域安全マップ「キッズセーフ」";
 
     const header = document.createElement("header");
-    header.style.height = '56px';
-    header.style.margin = '0';
-    header.style.display = 'grid';
+    header.style.height = "56px";
+    header.style.margin = "0";
+    header.style.display = "grid";
     header.style.gridTemplate =`
       "left-button subtitle right-button" 16px
       "left-button title rigth-button" 24px
       / 56px 1fr 56px
     `;
-    header.style.gap = '8px';
-    header.style.placeContent = 'center';
+    header.style.gap = "8px";
+    header.style.placeContent = "center";
     comp.appendChild(header);
 
     const menuButton = document.createElement("div");
@@ -113,17 +113,17 @@
 
     const subtitle = document.createElement("span");
     subtitle.textContent = "越前市国高地区 地域安全マップ";
-    subtitle.style.fontSize = '16px';
-    subtitle.style.lineHeight = '1';
-    subtitle.style.gridArea = 'subtitle';
+    subtitle.style.fontSize = "16px";
+    subtitle.style.lineHeight = "1";
+    subtitle.style.gridArea = "subtitle";
     header.appendChild(subtitle);
 
     const title = document.createElement("span");
     title.textContent = "キッズセーフ";
-    title.style.fontSize = '24px';
-    title.style.lineHeight = '1';
-    title.style.fontWeight = 'bold';
-    title.style.gridArea = 'title';
+    title.style.fontSize = "24px";
+    title.style.lineHeight = "1";
+    title.style.fontWeight = "bold";
+    title.style.gridArea = "title";
     header.appendChild(title);
 
     const div = document.createElement("div");
@@ -421,7 +421,7 @@
     }
 
     // 現在地を取得してピンを打つ
-    const currentPositionMarker = L.marker([36, 140], {title: "現在地"}).addTo(map).bindPopup('現在地');
+    const currentPositionMarker = L.marker([36, 140], {title: "現在地"}).addTo(map).bindPopup("現在地");
     navigator.geolocation.getCurrentPosition((position) => {
       const currentLoc = [position.coords.latitude, position.coords.longitude];
       currentPositionMarker.setLatLng(currentLoc);
