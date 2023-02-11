@@ -79,13 +79,52 @@
     document.body.style.textAlign = "center";
     comp.style.backgroundColor = "#D74938";
     comp.style.color = "white";
+    
+    document.title = "越前市国高地区 地域安全マップ「キッズセーフ」";
 
-    const h1 = document.createElement("h1");
-    h1.textContent = document.title =
-      "越前市国高地区 地域安全マップ「キッズセーフ」";
-    h1.style.margin = "0";
-    h1.style.padding = ".3em";
-    comp.appendChild(h1);
+    const header = document.createElement("header");
+    header.style.height = "56px";
+    header.style.margin = "0";
+    header.style.display = "grid";
+    header.style.gridTemplate =`
+      "left-button subtitle right-button" 16px
+      "left-button title rigth-button" 24px
+      / 56px 1fr 56px
+    `;
+    header.style.gap = "8px";
+    header.style.placeContent = "center";
+    comp.appendChild(header);
+
+    const menuButton = document.createElement("div");
+    menuButton.style.gridArea = "left-button";
+    menuButton.style.display = "grid";
+    menuButton.style.placeContent = "center";
+    menuButton.style.cursor = "pointer";
+    menuButton.onclick = () => {
+      drawer.style.display = "block";
+    };
+    header.appendChild(menuButton);
+
+    const menuIconImage = document.createElement("img");
+    menuIconImage.setAttribute("src", "./images/icon_menu.svg");
+    menuIconImage.style.height = "40px";
+    menuIconImage.style.width = "40px";
+    menuButton.appendChild(menuIconImage);
+
+    const subtitle = document.createElement("span");
+    subtitle.textContent = "越前市国高地区 地域安全マップ";
+    subtitle.style.fontSize = "16px";
+    subtitle.style.lineHeight = "1";
+    subtitle.style.gridArea = "subtitle";
+    header.appendChild(subtitle);
+
+    const title = document.createElement("span");
+    title.textContent = "キッズセーフ";
+    title.style.fontSize = "24px";
+    title.style.lineHeight = "1";
+    title.style.fontWeight = "bold";
+    title.style.gridArea = "title";
+    header.appendChild(title);
 
     const div = document.createElement("div");
     comp.appendChild(div);
@@ -93,7 +132,7 @@
     style({
       ".divmap": {
         width: "100%",
-        height: "calc(100vh - 10em)",
+        height: "calc(100vh - 56px)",
       },
       "@media print": {
         // 印刷用CSS
@@ -104,6 +143,47 @@
         },
       },
     });
+
+    const drawer = document.createElement("div");
+    drawer.style.display = "none"; // 最初は非表示にする/表示するときはblock
+    drawer.style.height = "100%";
+    drawer.style.width = "300px";
+    drawer.style.position = "absolute";
+    drawer.style.top = "0";
+    drawer.style.left = "0";
+    drawer.style.zIndex = "1000"; // leafletの上に表示できる最小のz-indexがこれ
+    drawer.style.backgroundColor = "white";
+    drawer.style.color = "black";
+    drawer.style.overflow = "hidden";
+    comp.appendChild(drawer);
+
+    const closeMenuButton = document.createElement("div");
+    closeMenuButton.style.height = "56px";
+    closeMenuButton.style.width = "56px";
+    closeMenuButton.style.padding = "8px";
+    closeMenuButton.style.display = "grid";
+    closeMenuButton.style.placeContent = "center";
+    closeMenuButton.onclick = () => {
+      drawer.style.display = "none";
+    };
+    drawer.appendChild(closeMenuButton)
+
+    const closeMenuIconImage = document.createElement("img");
+    closeMenuIconImage.setAttribute("src", "./images/icon_close.svg");
+    closeMenuIconImage.style.height = "40px";
+    closeMenuIconImage.style.width = "40px";
+    closeMenuButton.appendChild(closeMenuIconImage);
+
+    const drawerItems = document.createElement("div");
+    drawerItems.style.height = "calc(100% - 56px)";
+    drawerItems.style.width = "100%";
+    drawerItems.style.padding = "0 8px 16px";
+    drawerItems.style.overflowY = "scroll";
+    drawerItems.style.display = "flex";
+    drawerItems.style.flexDirection = "column";
+    drawerItems.style.gap = "8px";
+    drawerItems.style.alignItems = "flex-start";
+    drawer.appendChild(drawerItems);
 
     //
     const map = L.map(div);
@@ -326,11 +406,9 @@
 
     // レイヤー選択
     {
-      const div = document.createElement("div");
-      document.body.appendChild(div);
       for (const layer of layers) {
         const chk = new CheckBox(layer[0]);
-        div.appendChild(chk);
+        drawerItems.appendChild(chk);
         chk.checked = true;
         chk.onchange = () => {
           if (chk.checked) {
@@ -342,16 +420,31 @@
       }
     }
 
-    // 現在地取得
+    // 現在地を取得してピンを打つ
+    const currentPositionMarker = L.marker([36, 140], {title: "現在地"}).addTo(map).bindPopup("現在地");
     navigator.geolocation.getCurrentPosition((position) => {
-      console.table(position.coords);
-      const currentloc = [position.coords.latitude, position.coords.longitude];
-      map.setView(currentloc, 18);
-      L.marker(currentloc, {title: "現在地"}).addTo(map);
-    });
+      const currentLoc = [position.coords.latitude, position.coords.longitude];
+      currentPositionMarker.setLatLng(currentLoc);
+    })
+
+    // 現在地を監視してピン/マップを動かす
+    const watchGPS = new CheckBox("現在地追従モード")
+    let watchPosition;
+    watchGPS.checked = false
+    watchGPS.onchange = () => {
+      if (watchGPS.checked) {
+        watchPosition = navigator.geolocation.watchPosition((position) => {
+          const currentLoc = [position.coords.latitude, position.coords.longitude];
+          currentPositionMarker.setLatLng(currentLoc);
+          map.setView(currentLoc, 16);
+        });
+      } else {
+        navigator.geolocation.clearWatch(watchPosition);
+      }
+    };
+    drawerItems.appendChild(watchGPS);
 
     // footer
-    const footer = document.createElement("footer");
     const links = [
       { text: "データ編集や閲覧はGitHubで", url: "https://github.com/code4fukui/kunitaka/tree/main/kidssafe" },
       { text: "下記データは、オープンデータライセンスでご利用いただけます", url: "https://github.com/code4fukui/opendata-license/" },
@@ -362,19 +455,25 @@
     for (const link of links) {
       const a = document.createElement("a");
       a.style.display = "block";
+      a.style.textAlign = "left";
       a.textContent = link.text;
       a.href = link.url; // "https://github.com/code4fukui/kunitaka/";
-      a.style.color = "white";
-      footer.appendChild(a);
+      drawerItems.appendChild(a);
     }
-    comp.appendChild(footer);
 
-    document.body.appendChild(document.createElement("br"));
-    document.body.appendChild(new QRCode());
+    const qr = new QRCode();
+    qr.style.width = "100%";
+    qr.style.display = "grid";
+    qr.style.placeContent = "center";
+    drawerItems.appendChild(qr);
   };
 </script>
 
 <style>
+  * {
+    box-sizing: border-box;
+  }
+
   .selectlayers {
     margin: 1em;
   }
