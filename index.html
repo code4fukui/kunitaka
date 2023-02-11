@@ -77,15 +77,36 @@
 
     document.body.style.margin = "0";
     document.body.style.textAlign = "center";
+    document.body.style.boxSizing = "border-box";
     comp.style.backgroundColor = "#D74938";
     comp.style.color = "white";
+    
+    document.title = "越前市国高地区 地域安全マップ「キッズセーフ」";
 
-    const h1 = document.createElement("h1");
-    h1.textContent = document.title =
-      "越前市国高地区 地域安全マップ「キッズセーフ」";
-    h1.style.margin = "0";
-    h1.style.padding = ".3em";
-    comp.appendChild(h1);
+    const header = document.createElement("header");
+    header.style.height = '56px';
+    header.style.margin = '0';
+    header.style.padding = '0 56px';
+    header.style.display = 'flex';
+    header.style.alignItems = 'center';
+    header.style.justifyContent = 'center';
+    header.style.flexDirection = 'column';
+    
+    const subtitle = document.createElement("span")
+    subtitle.textContent = "越前市国高地区 地域安全マップ"
+    subtitle.style.fontSize = '16px'
+    subtitle.style.lineHeight = '1'
+    header.appendChild(subtitle)
+
+    const title = document.createElement("span")
+    title.textContent = "キッズセーフ"
+    title.style.marginTop = '4px'
+    title.style.fontSize = '24px'
+    title.style.lineHeight = '1'
+    title.style.fontWeight = 'bold'
+    header.appendChild(title)
+
+    comp.appendChild(header);
 
     const div = document.createElement("div");
     comp.appendChild(div);
