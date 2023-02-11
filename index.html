@@ -96,6 +96,18 @@
     header.style.placeContent = 'center';
     comp.appendChild(header);
 
+    const menuButton = document.createElement("div");
+    menuButton.style.gridArea = "left-button";
+    menuButton.style.display = "grid";
+    menuButton.style.placeContent = "center";
+    header.appendChild(menuButton);
+
+    const menuIconImage = document.createElement("img");
+    menuIconImage.setAttribute("src", "./images/icon_menu.svg");
+    menuIconImage.style.height = "40px";
+    menuIconImage.style.width = "40px";
+    menuButton.appendChild(menuIconImage);
+
     const subtitle = document.createElement("span");
     subtitle.textContent = "越前市国高地区 地域安全マップ";
     subtitle.style.fontSize = '16px';
