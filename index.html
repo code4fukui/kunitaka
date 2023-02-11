@@ -343,11 +343,11 @@
     }
 
     // 現在地取得
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.table(position.coords);
-      const currentloc = [position.coords.latitude, position.coords.longitude];
-      map.setView(currentloc, 18);
-      L.marker(currentloc, {title: "現在地"}).addTo(map);
+    const currentPositionMarker = L.marker([36, 140], {title: "現在地"}).addTo(map).bindPopup('現在地');
+    const watchPosition = navigator.geolocation.watchPosition((position) => {
+      const currentLoc = [position.coords.latitude, position.coords.longitude];
+      currentPositionMarker.setLatLng(currentLoc);
+      map.setView(currentLoc, 17);
     });
 
     // footer
