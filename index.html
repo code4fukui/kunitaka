@@ -342,6 +342,14 @@
       }
     }
 
+    // 現在地取得
+    navigator.geolocation.getCurrentPosition((position) => {
+      console.table(position.coords);
+      const currentloc = [position.coords.latitude, position.coords.longitude];
+      map.setView(currentloc, 18);
+      L.marker(currentloc, {title: "現在地"}).addTo(map);
+    });
+
     // footer
     const footer = document.createElement("footer");
     const links = [
