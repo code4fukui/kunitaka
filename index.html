@@ -77,7 +77,6 @@
 
     document.body.style.margin = "0";
     document.body.style.textAlign = "center";
-    document.body.style.boxSizing = "border-box";
     comp.style.backgroundColor = "#D74938";
     comp.style.color = "white";
     
@@ -100,6 +99,10 @@
     menuButton.style.gridArea = "left-button";
     menuButton.style.display = "grid";
     menuButton.style.placeContent = "center";
+    menuButton.style.cursor = "pointer";
+    menuButton.onclick = () => {
+      drawer.style.display = "block";
+    };
     header.appendChild(menuButton);
 
     const menuIconImage = document.createElement("img");
@@ -140,6 +143,47 @@
         },
       },
     });
+
+    const drawer = document.createElement("div");
+    drawer.style.display = "none"; // 最初は非表示にする/表示するときはblock
+    drawer.style.height = "100%";
+    drawer.style.width = "300px";
+    drawer.style.position = "absolute";
+    drawer.style.top = "0";
+    drawer.style.left = "0";
+    drawer.style.zIndex = "1000"; // leafletの上に表示できる最小のz-indexがこれ
+    drawer.style.backgroundColor = "white";
+    drawer.style.color = "black";
+    drawer.style.overflow = "hidden";
+    comp.appendChild(drawer);
+
+    const closeMenuButton = document.createElement("div");
+    closeMenuButton.style.height = "56px";
+    closeMenuButton.style.width = "56px";
+    closeMenuButton.style.padding = "8px";
+    closeMenuButton.style.display = "grid";
+    closeMenuButton.style.placeContent = "center";
+    closeMenuButton.onclick = () => {
+      drawer.style.display = "none";
+    };
+    drawer.appendChild(closeMenuButton)
+
+    const closeMenuIconImage = document.createElement("img");
+    closeMenuIconImage.setAttribute("src", "./images/icon_close.svg");
+    closeMenuIconImage.style.height = "40px";
+    closeMenuIconImage.style.width = "40px";
+    closeMenuButton.appendChild(closeMenuIconImage);
+
+    const drawerItems = document.createElement("div");
+    drawerItems.style.height = "calc(100% - 56px)";
+    drawerItems.style.width = "100%";
+    drawerItems.style.padding = "0 8px 16px";
+    drawerItems.style.overflowY = "scroll";
+    drawerItems.style.display = "flex";
+    drawerItems.style.flexDirection = "column";
+    drawerItems.style.gap = "8px";
+    drawerItems.style.alignItems = "flex-start";
+    drawer.appendChild(drawerItems);
 
     //
     const map = L.map(div);
@@ -362,11 +406,9 @@
 
     // レイヤー選択
     {
-      const div = document.createElement("div");
-      document.body.appendChild(div);
       for (const layer of layers) {
         const chk = new CheckBox(layer[0]);
-        div.appendChild(chk);
+        drawerItems.appendChild(chk);
         chk.checked = true;
         chk.onchange = () => {
           if (chk.checked) {
@@ -387,7 +429,6 @@
     });
 
     // footer
-    const footer = document.createElement("footer");
     const links = [
       { text: "データ編集や閲覧はGitHubで", url: "https://github.com/code4fukui/kunitaka/tree/main/kidssafe" },
       { text: "下記データは、オープンデータライセンスでご利用いただけます", url: "https://github.com/code4fukui/opendata-license/" },
@@ -398,19 +439,25 @@
     for (const link of links) {
       const a = document.createElement("a");
       a.style.display = "block";
+      a.style.textAlign = "left";
       a.textContent = link.text;
       a.href = link.url; // "https://github.com/code4fukui/kunitaka/";
-      a.style.color = "white";
-      footer.appendChild(a);
+      drawerItems.appendChild(a);
     }
-    comp.appendChild(footer);
 
-    document.body.appendChild(document.createElement("br"));
-    document.body.appendChild(new QRCode());
+    const qr = new QRCode();
+    qr.style.width = "100%";
+    qr.style.display = "grid";
+    qr.style.placeContent = "center";
+    drawerItems.appendChild(qr);
   };
 </script>
 
 <style>
+  * {
+    box-sizing: border-box;
+  }
+
   .selectlayers {
     margin: 1em;
   }
