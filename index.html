@@ -420,13 +420,29 @@
       }
     }
 
-    // 現在地取得
+    // 現在地を取得してピンを打つ
     const currentPositionMarker = L.marker([36, 140], {title: "現在地"}).addTo(map).bindPopup('現在地');
-    const watchPosition = navigator.geolocation.watchPosition((position) => {
+    navigator.geolocation.getCurrentPosition((position) => {
       const currentLoc = [position.coords.latitude, position.coords.longitude];
       currentPositionMarker.setLatLng(currentLoc);
-      map.setView(currentLoc, 17);
-    });
+    })
+
+    // 現在地を監視してピン/マップを動かす
+    const watchGPS = new CheckBox("現在地追従モード")
+    let watchPosition;
+    watchGPS.checked = false
+    watchGPS.onchange = () => {
+      if (watchGPS.checked) {
+        watchPosition = navigator.geolocation.watchPosition((position) => {
+          const currentLoc = [position.coords.latitude, position.coords.longitude];
+          currentPositionMarker.setLatLng(currentLoc);
+          map.setView(currentLoc, 16);
+        });
+      } else {
+        navigator.geolocation.clearWatch(watchPosition);
+      }
+    };
+    drawerItems.appendChild(watchGPS);
 
     // footer
     const links = [
