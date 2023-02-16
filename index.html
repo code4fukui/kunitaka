@@ -195,7 +195,8 @@
     }).addTo(map);
 
     const lls = [];
-    const showIcons = async (list, icon) => {
+    const showIcons = async (list, icon0) => {
+      const icon = "./icon/" + icon0;
       const iconlayer = L.layerGroup();
       iconlayer.addTo(map);
       const opt = {};
