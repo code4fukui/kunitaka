@@ -4,6 +4,14 @@
 
 https://code4fukui.github.io/kunitaka/kidssafe.html  
 
+## 危険箇所編集方法
+
+下記アプリ「緯度経度地図」から該当場所に動かして、Geo3x3をコピーする
+- https://fukuno.jig.jp/app/map/latlng/#%E8%B6%8A%E5%89%8D%E5%B8%82
+
+<img width="511" alt="image" src="https://user-images.githubusercontent.com/1715217/219602296-2d3b72ce-581a-4ba8-8c69-edbe1b95ee76.png">
+
+
 ## オープンデータ CC BY
 
 - [通学路GeoJSON](https://code4fukui.github.io/kunitaka/schoolzone.geojson)
