@@ -195,10 +195,12 @@
     }).addTo(map);
 
     const lls = [];
-    const showIcons = async (list, icon0) => {
+    const showIcons = async (list, icon0, addlayer = true) => {
       const icon = "./icon/" + icon0;
       const iconlayer = L.layerGroup();
-      iconlayer.addTo(map);
+      if (addlayer) {
+        iconlayer.addTo(map);
+      }
       const opt = {};
       try {
         const img = await fetchImage(icon);
@@ -285,12 +287,14 @@
     const list3 = CSV.toJSON(await CSV.fetch("./kidssafe2021.csv"));layers.push(["危険箇所2021",await showIcons(list3, "danger2021.png"),]);
 
     // 不審者情報
+    /*
     try {
       const listfusinsya = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/kunitaka/fusinnsya.csv"));
       layers.push(["不審者情報",await showIcons(listfusinsya,"https://code4fukui.github.io/kunitaka/fusinsya.png"),]);
     } catch (e) {
       console.log("不審者情報でエラー: " + e);
     }
+    */
 
     // ドローン写真
     const list4 = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/vr-fukui/vr-kunitaka.csv"));
@@ -380,7 +384,7 @@
         const data3 = data.filter(d => d.name == name);
         layers.push([
           "テレマティクスデータ " + name,
-          await showIcons(data3, icon + ".png"),
+          await showIcons(data3, icon + ".png", false),
         ]);
       }
     }
@@ -393,7 +397,7 @@
         icon: "bohan_camera.png",
       };
       const data = CSV.toJSON(await CSV.fetch(info.url));
-      console.log(data);
+      //console.log(data);
       layers.push([
         info.name,
         await showIcons(data, info.icon),
@@ -411,7 +415,14 @@
       for (const layer of layers) {
         const chk = new CheckBox(layer[0]);
         drawerItems.appendChild(chk);
-        chk.checked = true;
+        if (!layer[0].startsWith("テレマティクスデータ")) {
+          chk.checked = true;
+        } else {
+          chk.checked = false;
+        }
+        if (!chk.checked) {
+          map.removeLayer(layer[1]);
+        }
         chk.onchange = () => {
           if (chk.checked) {
             map.addLayer(layer[1]);
