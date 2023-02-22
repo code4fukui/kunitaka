@@ -279,10 +279,10 @@
       });
     }
     console.log(list);
-    layers.push(["危険箇所2020", await showIcons(list, "kidssafe_icon.png")]);
+    layers.push(["危険箇所2020", await showIcons(list, "danger.png")]);
 
     // 危険箇所2021
-    const list3 = CSV.toJSON(await CSV.fetch("./kidssafe2021.csv"));layers.push(["危険箇所2021",await showIcons(list3, "kidssafe2021_icon.png"),]);
+    const list3 = CSV.toJSON(await CSV.fetch("./kidssafe2021.csv"));layers.push(["危険箇所2021",await showIcons(list3, "danger2021.png"),]);
 
     // 不審者情報
     try {
@@ -365,21 +365,22 @@
         data2.forEach(d => data.push(d));
       }
       const names = [
-        "急加速",
-        "急ブレーキ",
-        "前方衝突警告",
-        "急ハンドル",
-        "ふらつき",
-        "車線逸脱警告",
-        "速度超過",
-        "衝突",
+        ["急加速", "speed"],
+        ["急ブレーキ", "brake"],
+        ["前方衝突警告", "aioi_3"],
+        ["急ハンドル", "aioi_4"],
+        ["ふらつき", "aioi_5"],
+        ["車線逸脱警告", "aioi_6"],
+        ["速度超過", "aioi_7"],
+        ["衝突", "aioi_8"],
       ];
       for (let i = 0; i < names.length; i++) {
-        const name = names[i];
+        const name = names[i][0];
+        const icon = names[i][1];
         const data3 = data.filter(d => d.name == name);
         layers.push([
           "テレマティクスデータ " + name,
-          await showIcons(data3, "aioi_" + (i + 1) + ".png"),
+          await showIcons(data3, icon + ".png"),
         ]);
       }
     }
@@ -448,6 +449,8 @@
     // footer
     const links = [
       { text: "データ編集や閲覧はGitHubで", url: "https://github.com/code4fukui/kunitaka/tree/main/kidssafe" },
+      { text: "アイコン（きけん、急ブレーキ、急加速） CC BY okiku.graphic", url: "https://www.instagram.com/okame.graphic/" },
+      { text: "アイコン（その他） by いらすとや", url: "https://www.irasutoya.com/" },
       { text: "下記データは、オープンデータライセンスでご利用いただけます", url: "https://github.com/code4fukui/opendata-license/" },
       { text: "テレマティクスオープンデータ by あいおいニッセイ同和損保", url: "https://www.aioinissaydowa.co.jp/" },
       { text: "地域安全オープンデータ by 国高地区自治振興会", url: "https://www.city.echizen.lg.jp/office/010/130030/kunitaka.html" },
