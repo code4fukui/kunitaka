@@ -45,6 +45,7 @@
       tbl.appendChild(tr);
       const th = cr("th");
       th.textContent = name;
+      th.style.whiteSpace = "nowrap";
       tr.appendChild(th);
       const td = cr("td");
       td.style.minWidth = "8em";
@@ -54,6 +55,8 @@
         const url = n[1];
         const cap = n[2];
         td.innerHTML = `<a href=${url}>${cap}</a>`;
+      } else if (val.startsWith("https://")) {
+        td.innerHTML = `<a href=${val}>詳細</a>`;
       } else {
         td.textContent = val;
       }
@@ -191,7 +194,8 @@
     L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
       attribution:
         '<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>"',
-      maxZoom: 18,
+      maxZoom: 21,
+      maxNativeZoom: 18,
     }).addTo(map);
 
     const lls = [];
@@ -300,6 +304,35 @@
     const list4 = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/vr-fukui/vr-kunitaka.csv"));
     layers.push(["ドローン写真", await showIcons(list4, "./drone_icon.png")]);
 
+    // 360度カメラ画像
+    {
+      const info = {
+        url: "./cam360.csv",
+        name: "360度カメラ",
+        icon: "cam360.png",
+      };
+      const data = CSV.toJSON(await CSV.fetch(info.url));
+      //console.log(data);
+      layers.push([
+        info.name,
+        await showIcons(data, info.icon),
+      ]);
+    }
+    // 防犯カメラ
+    {
+      const info = {
+        url: "./bohan_camera.csv",
+        name: "防犯カメラ",
+        icon: "bohan_camera.png",
+      };
+      const data = CSV.toJSON(await CSV.fetch(info.url));
+      //console.log(data);
+      layers.push([
+        info.name,
+        await showIcons(data, info.icon),
+      ]);
+    }
+
     // こども110番の家
     const list2 = CSV.toJSON(await CSV.fetch("./house110.csv"));
     layers.push(["こども110番の家",await showIcons(list2, "house110_icon.png"),]);
@@ -389,20 +422,6 @@
       }
     }
 
-    // 防犯カメラ
-    {
-      const info = {
-        url: "./bohan_camera.csv",
-        name: "防犯カメラ",
-        icon: "bohan_camera.png",
-      };
-      const data = CSV.toJSON(await CSV.fetch(info.url));
-      //console.log(data);
-      layers.push([
-        info.name,
-        await showIcons(data, info.icon),
-      ]);
-    }
 
     // for (const point of accidents){
     //     const marker = L.icon([parseFloat(point.緯度), parseFloat(point.経度)],
