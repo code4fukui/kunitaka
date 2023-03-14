@@ -16,7 +16,13 @@ https://code4fukui.github.io/kunitaka/kidssafe.html
 
 - [通学路GeoJSON](https://code4fukui.github.io/kunitaka/schoolzone.geojson)
 
-## 開発の仕方
+## 横展開の仕方
+
+1. 本リポジトリをcloneする
+2. タイトルやデータを変更する
+3. GitHub Pages(SettingsのPages)を設定し公開する
+
+## 開発貢献の仕方
 
 ### cloneする
 
