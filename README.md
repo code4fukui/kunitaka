@@ -19,7 +19,7 @@ https://code4fukui.github.io/kunitaka/kidssafe.html
 ## 横展開の仕方
 
 1. 本リポジトリをcloneする
-2. タイトルやデータを変更する
+2. タイトルやデータを地区に合わせて変更する
 3. GitHub Pages(SettingsのPages)を設定し公開する
 
 ## 開発貢献の仕方
