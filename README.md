@@ -20,7 +20,26 @@
 
 - [通学路GeoJSON](https://code4fukui.github.io/kunitaka/schoolzone.geojson)
 
-## 開発の仕方
+## VRスポット
+
+<img width="863" alt="image" src="https://user-images.githubusercontent.com/1715217/226810770-cf572736-9d6f-49c9-8899-d3d7780f8425.png">
+
+- [VRスポット CSV](vr_spot.csv)
+
+## テレマティクスデータ
+
+<img width="864" alt="image" src="https://user-images.githubusercontent.com/1715217/226810981-dc211ecc-efe2-4d74-9a8e-36373cd1ad2b.png">
+
+- [テレマティクスデータ CSV by あいおいニッセイ同和損保](aioi_events.csv)
+- [テレマティクスデータ追加 CSV by あいおいニッセイ同和損保](aioi_events_additional.csv)
+
+## 横展開の仕方
+
+1. 本リポジトリをcloneする
+2. タイトルやデータを地区に合わせて変更する
+3. GitHub Pages(SettingsのPages)を設定し公開する
+
+## 開発貢献の仕方
 
 ### cloneする
 
