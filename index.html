@@ -55,7 +55,7 @@
         const url = n[1];
         const cap = n[2];
         td.innerHTML = `<a href=${url}>${cap}</a>`;
-      } else if (val.startsWith("https://")) {
+      } else if (val.startsWith("https://") || val.startsWith("http://")) {
         td.innerHTML = `<a href=${val}>詳細</a>`;
       } else {
         td.textContent = val;
@@ -310,6 +310,20 @@
         url: "./cam360.csv",
         name: "360度カメラ",
         icon: "cam360.png",
+      };
+      const data = CSV.toJSON(await CSV.fetch(info.url));
+      //console.log(data);
+      layers.push([
+        info.name,
+        await showIcons(data, info.icon),
+      ]);
+    }
+    // VRスポット
+    {
+      const info = {
+        url: "./vr_spot.csv",
+        name: "VRスポット",
+        icon: "vr.png",
       };
       const data = CSV.toJSON(await CSV.fetch(info.url));
       //console.log(data);

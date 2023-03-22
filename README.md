@@ -2,7 +2,11 @@
 
 ## 国高地区 地域安全 キッズセーフマップ / Kidssafe MAP in Kunitaka
 
-https://code4fukui.github.io/kunitaka/kidssafe.html  
+- https://code4fukui.github.io/kunitaka/
+
+## ソースコード
+
+- [index.html](index.html) - JavaScriptによるソースコード付きHTML
 
 ## 危険箇所編集方法
 
