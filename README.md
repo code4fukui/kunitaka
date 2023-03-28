@@ -25,6 +25,7 @@
 <img width="863" alt="image" src="https://user-images.githubusercontent.com/1715217/226810770-cf572736-9d6f-49c9-8899-d3d7780f8425.png">
 
 - [VRスポット CSV](vr_spot.csv)
+- [VRスポットの3Dモデルオープンデータとソースコード](https://github.com/code4fukui/vr-kunitaka/)
 
 ## テレマティクスデータ
 
